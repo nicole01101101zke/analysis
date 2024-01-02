@@ -20,6 +20,7 @@ def compile_cl_files(input_dir):
 
 
 #input_directory = "../shoc/src/opencl/level1/"
-input_directory = "../rodinia-main/opencl/"
+#input_directory = "../rodinia-main/opencl/"
+input_directory = "../AMDAPP_samples/cl/"
 
 compile_cl_files(input_directory)
