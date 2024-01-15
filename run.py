@@ -137,6 +137,29 @@ def run_rodinia_particlefilter(benchmark_row0, command):
             break
     workbook.save('/home/zke/analysis/data.xlsx')
 
+def run_AMD(benchmark_row0, path, run_command):
+    parboil_directory = "/home/zke/AMDAPP_samples_GPU/cl"
+    os.chdir(parboil_directory)
+    compile_command = f"cd {path} && cd build/bin/x86_64/Release/cl/{path} && {run_command}" 
+    result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
+    output = result.stdout
+    match = re.search(r'Total:\s*([\d.]+)', output)
+
+    if match:
+        extracted_number = float(match.group(1))
+        print("Extracted Number:", extracted_number)
+    else:
+        print("No match found.")
+    formatted_number = "{:.10f}".format(extracted_number)
+    
+    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    sheet = workbook.active
+    for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
+        if row[0] and row[0].startswith(benchmark_row0):
+            sheet.cell(row=row_number, column=12, value=formatted_number)
+            break
+    workbook.save('/home/zke/analysis/data.xlsx')
+
 # #run_parboil("parboil_bfs", "bfs", "SF")
 # run_parboil("parboil_cutcp", "cutcp", "large")
 # run_parboil("parboil_lbm", "lbm", "long")
@@ -193,5 +216,57 @@ def run_rodinia_particlefilter(benchmark_row0, command):
 # ERROR: clGetProgramBuildInfo() => -33
 # run_rodinia_particlefilter("rodinia_particlefilter_naive", "./OCL_particlefilter_naive.out -x 128 -y 128 -z 10 -np 10000")
 
-run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
-run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
+# run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
+# run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
+
+# run_AMD("amd_AtomicCounters", "AtomicCounters", "./AtomicCounters -t -x 16777216 -i 100")
+# run_AMD("amd_BinarySearch", "BinarySearch", "./BinarySearch -t -i 100")
+# run_AMD("amd_BinomialOption", "BinomialOption", "./BinomialOption -t -i 100")
+# run_AMD("amd_BitonicSort", "BitonicSort", "./BitonicSort -t -i 100")
+# run_AMD("amd_BlackScholes", "BlackScholes", "./BlackScholes -t -i 100")
+# run_AMD("amd_BlackScholesDP", "BlackScholesDP", "./BlackScholesDP -t -i 100")
+# run_AMD("amd_BoxFilter", "BoxFilter", "./BoxFilter -t -i 100")
+# run_AMD("amd_BufferBandwidth", "BufferBandwidth", "./BufferBandwidth -t -i 100") #这个专门用于测读写带宽，没必要放进来
+# run_AMD("amd_BufferImageInterop", "BufferImageInterop", "./BufferImageInterop -t -i 100")
+
+# run_AMD("amd_DCT", "DCT", "./DCT -t -i 100")
+# run_AMD("amd_DeviceFission", "DeviceFission", "./DeviceFission -t -i 100") # 设备不支持
+# run_AMD("amd_DeviceFission11Ext", "DeviceFission11Ext", "./DeviceFission11Ext -t -i 100") # 设备不支持
+# run_AMD("amd_DwtHaar1D", "DwtHaar1D", "./DwtHaar1D -t -i 100")
+# run_AMD("amd_FastWalshTransform", "FastWalshTransform", "./FastWalshTransform -t -i 100")
+# run_AMD("amd_FloydWarshall", "FloydWarshall", "./FloydWarshall -t -i 100")
+# run_AMD("amd_FluidSimulation2D", "FluidSimulation2D", "./FluidSimulation2D -t -i 100") # 依赖缺失，不跑
+# run_AMD("amd_GaussianNoiseGL", "GaussianNoiseGL", "./GaussianNoiseGL -t -i 100") # 依赖缺失，不跑
+
+# Error: clGetEventEventInfo Failed with Error Code: Error code : unknown error code
+# Location : /home/zke/AMDAPP_samples_GPU/cl/Histogram/../../include/SDKUtil/CLUtil.hpp:830
+# Error: WaitForEventAndRelease(ndrEvt1) Failed
+# run_AMD("amd_Histogram", "Histogram", "./Histogram -t -i 100")
+# run_AMD("amd_ImageBandwidth", "ImageBandwidth", "./ImageBandwidth -t -i 100") #专门用于测读写带宽，没必要放进来
+# run_AMD("amd_ImageOverlap", "ImageOverlap", "./ImageOverlap -t -i 100")
+# run_AMD("amd_KernelLaunch", "KernelLaunch", "./KernelLaunch -t -i 100") #专门用于测读写带宽，没必要放进来
+# run_AMD("amd_KmeansAutoclustering", "KmeansAutoclustering", "./KmeansAutoclustering -t -i 100") # 依赖缺失，不跑
+# run_AMD("amd_LUDecomposition", "LUDecomposition", "./LUDecomposition -t -i 100")
+# run_AMD("amd_Mandelbrot", "Mandelbrot", "./Mandelbrot -t -i 100") # 依赖缺失，不跑
+# run_AMD("amd_MatrixMulImage", "MatrixMulImage", "./MatrixMulImage -t -i 100")
+# run_AMD("amd_MatrixMultiplication", "MatrixMultiplication", "./MatrixMultiplication -t --eAppGflops")
+# run_AMD("amd_MatrixTranspose", "MatrixTranspose", "./MatrixTranspose -t -i 100")
+# run_AMD("amd_MemoryModel", "MemoryModel", "./MemoryModel -t -i 100") # 不统计时间
+# run_AMD("amd_MonteCarloAsian", "MonteCarloAsian", "./MonteCarloAsian -t -i 100")
+# run_AMD("amd_MonteCarloAsianDP", "MonteCarloAsianDP", "./MonteCarloAsianDP -t -i 100")
+
+# run_AMD("amd_NBody", "NBody", "./NBody -t -i 100") # 依赖缺失，不跑
+# run_AMD("amd_PrefixSum", "PrefixSum", "./PrefixSum -t -i 100")
+# run_AMD("amd_QuasiRandomSequence", "QuasiRandomSequence", "./QuasiRandomSequence -t -i 100")
+# run_AMD("amd_RadixSort", "RadixSort", "./RadixSort -t -i 100")
+# run_AMD("amd_RecursiveGaussian", "RecursiveGaussian", "./RecursiveGaussian -t -i 100")
+# run_AMD("amd_Reduction", "Reduction", "./Reduction -t -i 100")
+# run_AMD("amd_ScanLargeArrays", "ScanLargeArrays", "./ScanLargeArrays -t -i 100")
+# run_AMD("amd_SimpleConvolution", "SimpleConvolution", "./SimpleConvolution -t -i 100")
+# run_AMD("amd_SimpleGL", "SimpleGL", "./SimpleGL -t -i 100") # 依赖缺失，不跑
+# run_AMD("amd_SimpleImage", "SimpleImage", "./SimpleImage -t -i 100")
+# run_AMD("amd_SobelFilter", "SobelFilter", "./SobelFilter -t -i 100")
+# run_AMD("amd_StringSearch", "StringSearch", "./StringSearch -t -i 100")
+# run_AMD("amd_Template", "Template", "./Template -t -i 100")
+# run_AMD("amd_TransferOverlap", "TransferOverlap", "./TransferOverlap -t -i 100")
+# run_AMD("amd_URNG", "URNG", "./URNG -t -i 100")
