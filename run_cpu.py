@@ -3,6 +3,8 @@ import subprocess
 import re
 import openpyxl
 
+data_path = "/home/nicole/analysis/data.xlsx" # file to store analysis result
+
 def run_parboil(benchmark_row0, benchmark, dataset):
     parboil_directory = "/home/zke/parboil-test/"
     os.chdir(parboil_directory)
@@ -18,13 +20,13 @@ def run_parboil(benchmark_row0, benchmark, dataset):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_polybench(benchmark_row0, path, run_command):
     parboil_directory = "/home/zke/PolyBench-ACC/OpenCL/"
@@ -41,13 +43,13 @@ def run_polybench(benchmark_row0, path, run_command):
         extracted_number1 = float(match1.group(1))
         print("Extracted Number1:", extracted_number1)
         formatted_number1 = "{:.10f}".format(extracted_number1)
-        workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+        workbook = openpyxl.load_workbook(data_path)
         sheet = workbook.active
         for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
             if row[0] and row[0].startswith(benchmark_row0):
                 sheet.cell(row=row_number, column=12, value=formatted_number1)
                 break
-        workbook.save('/home/zke/analysis/data.xlsx')
+        workbook.save(data_path)
     else:
         print("No match1 found.")
 
@@ -55,13 +57,13 @@ def run_polybench(benchmark_row0, path, run_command):
         extracted_number2 = float(match2.group(1))
         print("Extracted Number2:", extracted_number2)
         formatted_number2 = "{:.10f}".format(extracted_number2)
-        workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+        workbook = openpyxl.load_workbook(data_path)
         sheet = workbook.active
         for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
             if row[0] and row[0].startswith(benchmark_row0):
                 sheet.cell(row=row_number, column=11, value=formatted_number2)
                 break
-        workbook.save('/home/zke/analysis/data.xlsx')
+        workbook.save(data_path)
     else:
         print("No match2 found.")
     
@@ -84,35 +86,35 @@ def run_rodinia(benchmark_row0, path):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_nn(): # 这个看的是Exec:
     formatted_number = "{:.10f}".format(0.010240)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_nn"):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_pathfinder(): # 很奇怪，编译时找不到timing.h，在这里跑找不到编译好的文件
     formatted_number = "{:.10f}".format(0.198896) 
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_pathfinder"):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_particlefilter(benchmark_row0, command):
     parboil_directory = "/home/zke/rodinia-main/opencl/particlefilter"
@@ -129,16 +131,16 @@ def run_rodinia_particlefilter(benchmark_row0, command):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_AMD(benchmark_row0, path, run_command):
-    parboil_directory = "/home/zke/AMDAPP_samples_GPU/cl"
+    parboil_directory = "/home/nicole/AMDAPP_samples_CPU/cl"
     os.chdir(parboil_directory)
     compile_command = f"cd {path} && cd build/bin/x86_64/Release/cl/{path} && {run_command}" 
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
@@ -152,13 +154,13 @@ def run_AMD(benchmark_row0, path, run_command):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 # #run_parboil("parboil_bfs", "bfs", "SF")
 # run_parboil("parboil_cutcp", "cutcp", "large")
@@ -241,7 +243,7 @@ def run_AMD(benchmark_row0, path, run_command):
 # Error: clGetEventEventInfo Failed with Error Code: Error code : unknown error code
 # Location : /home/zke/AMDAPP_samples_GPU/cl/Histogram/../../include/SDKUtil/CLUtil.hpp:830
 # Error: WaitForEventAndRelease(ndrEvt1) Failed
-# run_AMD("amd_Histogram", "Histogram", "./Histogram -t -i 100")
+# run_AMD("amd_Histogram", "Histogram", "./Histogram -t -i 100") # error
 # run_AMD("amd_ImageBandwidth", "ImageBandwidth", "./ImageBandwidth -t -i 100") #专门用于测读写带宽，没必要放进来
 # run_AMD("amd_ImageOverlap", "ImageOverlap", "./ImageOverlap -t -i 100")
 # run_AMD("amd_KernelLaunch", "KernelLaunch", "./KernelLaunch -t -i 100") #专门用于测读写带宽，没必要放进来
