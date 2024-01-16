@@ -3,8 +3,14 @@ import subprocess
 import re
 import openpyxl
 
+data_path = "/home/zke/analysis/data.xlsx" # file to store analysis result
+parboil_directory = "/home/zke/parboil-test/"
+polybench_directory = "/home/zke/PolyBench-ACC/OpenCL/"
+rodinia_directory = "/home/zke/rodinia-main/opencl"
+rodinia_particlefilter_directory = "/home/zke/rodinia-main/opencl/particlefilter"
+amd_directory = "/home/zke/AMDAPP_samples_GPU/cl"
+
 def run_parboil(benchmark_row0, benchmark, dataset):
-    parboil_directory = "/home/zke/parboil-test/"
     os.chdir(parboil_directory)
     compile_command = f"./parboil run {benchmark} opencl_nvidia {dataset}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
@@ -18,17 +24,16 @@ def run_parboil(benchmark_row0, benchmark, dataset):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_polybench(benchmark_row0, path, run_command):
-    parboil_directory = "/home/zke/PolyBench-ACC/OpenCL/"
-    os.chdir(parboil_directory)
+    os.chdir(polybench_directory)
     compile_command = f"cd {path} && {run_command}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -41,13 +46,13 @@ def run_polybench(benchmark_row0, path, run_command):
         extracted_number1 = float(match1.group(1))
         print("Extracted Number1:", extracted_number1)
         formatted_number1 = "{:.10f}".format(extracted_number1)
-        workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+        workbook = openpyxl.load_workbook(data_path)
         sheet = workbook.active
         for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
             if row[0] and row[0].startswith(benchmark_row0):
                 sheet.cell(row=row_number, column=12, value=formatted_number1)
                 break
-        workbook.save('/home/zke/analysis/data.xlsx')
+        workbook.save(data_path)
     else:
         print("No match1 found.")
 
@@ -55,19 +60,18 @@ def run_polybench(benchmark_row0, path, run_command):
         extracted_number2 = float(match2.group(1))
         print("Extracted Number2:", extracted_number2)
         formatted_number2 = "{:.10f}".format(extracted_number2)
-        workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+        workbook = openpyxl.load_workbook(data_path)
         sheet = workbook.active
         for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
             if row[0] and row[0].startswith(benchmark_row0):
                 sheet.cell(row=row_number, column=11, value=formatted_number2)
                 break
-        workbook.save('/home/zke/analysis/data.xlsx')
+        workbook.save(data_path)
     else:
         print("No match2 found.")
     
 def run_rodinia(benchmark_row0, path):
-    parboil_directory = "/home/zke/rodinia-main/opencl"
-    os.chdir(parboil_directory)
+    os.chdir(rodinia_directory)
     compile_command = f"cd {path} && make clean && make && make --always-make run" # make rundwt2d报错make: 'run' is up to date.
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -84,39 +88,38 @@ def run_rodinia(benchmark_row0, path):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_nn(): # 这个看的是Exec:
     formatted_number = "{:.10f}".format(0.010240)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_nn"):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_pathfinder(): # 很奇怪，编译时找不到timing.h，在这里跑找不到编译好的文件
     formatted_number = "{:.10f}".format(0.198896) 
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_pathfinder"):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_rodinia_particlefilter(benchmark_row0, command):
-    parboil_directory = "/home/zke/rodinia-main/opencl/particlefilter"
-    os.chdir(parboil_directory)
+    os.chdir(rodinia_particlefilter_directory)
     compile_command = f"make clean && make && {command}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -129,17 +132,16 @@ def run_rodinia_particlefilter(benchmark_row0, command):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 def run_AMD(benchmark_row0, path, run_command):
-    parboil_directory = "/home/zke/AMDAPP_samples_GPU/cl"
-    os.chdir(parboil_directory)
+    os.chdir(amd_directory)
     compile_command = f"cd {path} && cd build/bin/x86_64/Release/cl/{path} && {run_command}" 
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -152,13 +154,13 @@ def run_AMD(benchmark_row0, path, run_command):
         print("No match found.")
     formatted_number = "{:.10f}".format(extracted_number)
     
-    workbook = openpyxl.load_workbook('/home/zke/analysis/data.xlsx')
+    workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
             sheet.cell(row=row_number, column=12, value=formatted_number)
             break
-    workbook.save('/home/zke/analysis/data.xlsx')
+    workbook.save(data_path)
 
 # #run_parboil("parboil_bfs", "bfs", "SF")
 # run_parboil("parboil_cutcp", "cutcp", "large")

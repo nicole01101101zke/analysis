@@ -4,9 +4,13 @@ import re
 import openpyxl
 
 data_path = "/home/nicole/analysis/data.xlsx" # file to store analysis result
+parboil_directory = "/home/nicole/parboil-test/"
+polybench_directory = "/home/nicole/PolyBench-ACC/OpenCL/"
+rodinia_directory = "/home/nicole/rodinia-main/opencl"
+rodinia_particlefilter_directory = "/home/nicole/rodinia-main/opencl/particlefilter"
+amd_directory = "/home/nicole/AMDAPP_samples_CPU/cl"
 
 def run_parboil(benchmark_row0, benchmark, dataset):
-    parboil_directory = "/home/zke/parboil-test/"
     os.chdir(parboil_directory)
     compile_command = f"./parboil run {benchmark} opencl_nvidia {dataset}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
@@ -29,8 +33,7 @@ def run_parboil(benchmark_row0, benchmark, dataset):
     workbook.save(data_path)
 
 def run_polybench(benchmark_row0, path, run_command):
-    parboil_directory = "/home/zke/PolyBench-ACC/OpenCL/"
-    os.chdir(parboil_directory)
+    os.chdir(polybench_directory)
     compile_command = f"cd {path} && {run_command}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -68,8 +71,7 @@ def run_polybench(benchmark_row0, path, run_command):
         print("No match2 found.")
     
 def run_rodinia(benchmark_row0, path):
-    parboil_directory = "/home/zke/rodinia-main/opencl"
-    os.chdir(parboil_directory)
+    os.chdir(rodinia_directory)
     compile_command = f"cd {path} && make clean && make && make --always-make run" # make rundwt2d报错make: 'run' is up to date.
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -117,8 +119,7 @@ def run_rodinia_pathfinder(): # 很奇怪，编译时找不到timing.h，在这�
     workbook.save(data_path)
 
 def run_rodinia_particlefilter(benchmark_row0, command):
-    parboil_directory = "/home/zke/rodinia-main/opencl/particlefilter"
-    os.chdir(parboil_directory)
+    os.chdir(rodinia_particlefilter_directory)
     compile_command = f"make clean && make && {command}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
@@ -140,8 +141,7 @@ def run_rodinia_particlefilter(benchmark_row0, command):
     workbook.save(data_path)
 
 def run_AMD(benchmark_row0, path, run_command):
-    parboil_directory = "/home/nicole/AMDAPP_samples_CPU/cl"
-    os.chdir(parboil_directory)
+    os.chdir(amd_directory)
     compile_command = f"cd {path} && cd build/bin/x86_64/Release/cl/{path} && {run_command}" 
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
