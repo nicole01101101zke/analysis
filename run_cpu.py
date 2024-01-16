@@ -6,8 +6,8 @@ import openpyxl
 data_path = "/home/nicole/analysis/data.xlsx" # file to store analysis result
 parboil_directory = "/home/nicole/parboil-test/"
 polybench_directory = "/home/nicole/PolyBench-ACC/OpenCL/"
-rodinia_directory = "/home/nicole/rodinia-main/opencl"
-rodinia_particlefilter_directory = "/home/nicole/rodinia-main/opencl/particlefilter"
+rodinia_directory = "/home/nicole/rodinia_CPU/opencl"
+rodinia_particlefilter_directory = "/home/nicole/rodinia_CPU/opencl/particlefilter"
 amd_directory = "/home/nicole/AMDAPP_samples_CPU/cl"
 
 def run_parboil(benchmark_row0, benchmark, dataset):
@@ -28,47 +28,10 @@ def run_parboil(benchmark_row0, benchmark, dataset):
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
     workbook.save(data_path)
 
-def run_polybench(benchmark_row0, path, run_command):
-    os.chdir(polybench_directory)
-    compile_command = f"cd {path} && {run_command}"
-    result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
-    output = result.stdout
-    pattern1 = r"GPU Time in seconds:\s*([\d.]+)"
-    pattern2 = r"CPU Time in seconds:\s*([\d.]+)"
-    match1 = re.search(pattern1, output)
-    match2 = re.search(pattern2, output)
-
-    if match1:
-        extracted_number1 = float(match1.group(1))
-        print("Extracted Number1:", extracted_number1)
-        formatted_number1 = "{:.10f}".format(extracted_number1)
-        workbook = openpyxl.load_workbook(data_path)
-        sheet = workbook.active
-        for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
-            if row[0] and row[0].startswith(benchmark_row0):
-                sheet.cell(row=row_number, column=12, value=formatted_number1)
-                break
-        workbook.save(data_path)
-    else:
-        print("No match1 found.")
-
-    if match2:
-        extracted_number2 = float(match2.group(1))
-        print("Extracted Number2:", extracted_number2)
-        formatted_number2 = "{:.10f}".format(extracted_number2)
-        workbook = openpyxl.load_workbook(data_path)
-        sheet = workbook.active
-        for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
-            if row[0] and row[0].startswith(benchmark_row0):
-                sheet.cell(row=row_number, column=11, value=formatted_number2)
-                break
-        workbook.save(data_path)
-    else:
-        print("No match2 found.")
     
 def run_rodinia(benchmark_row0, path):
     os.chdir(rodinia_directory)
@@ -92,18 +55,18 @@ def run_rodinia(benchmark_row0, path):
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
     workbook.save(data_path)
 
 def run_rodinia_nn(): # 这个看的是Exec:
-    formatted_number = "{:.10f}".format(0.010240)
+    formatted_number = "{:.10f}".format(0.060648)
     
     workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_nn"):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
     workbook.save(data_path)
 
@@ -114,7 +77,7 @@ def run_rodinia_pathfinder(): # 很奇怪，编译时找不到timing.h，在这�
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith("rodinia_pathfinder"):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
     workbook.save(data_path)
 
@@ -136,7 +99,7 @@ def run_rodinia_particlefilter(benchmark_row0, command):
     sheet = workbook.active
     for row_number, row in enumerate(sheet.iter_rows(values_only=True), start=1):
         if row[0] and row[0].startswith(benchmark_row0):
-            sheet.cell(row=row_number, column=12, value=formatted_number)
+            sheet.cell(row=row_number, column=11, value=formatted_number)
             break
     workbook.save(data_path)
 
@@ -193,33 +156,33 @@ def run_AMD(benchmark_row0, path, run_command):
 # run_polybench("polybench_jacobi-1d-imper", "stencils/jacobi-1d-imper", "./jacobi1D.exe")
 # run_polybench("polybench_jacobi-2d-imper", "stencils/jacobi-2d-imper", "./jacobi2D.exe")
 
-# run_rodinia("rodinia_b+tree", "b+tree")
-# run_rodinia("rodinia_backprop", "backprop")
-# run_rodinia("rodinia_bfs", "bfs")
-# run_rodinia("rodinia_cfd", "cfd") # run操作没写在makefile里，修改了Makefile
-# run_rodinia("rodinia_dwt2d", "dwt2d") # run操作没写在makefile里，修改了Makefile
-# run_rodinia("rodinia_gaussian", "gaussian")
-# run_rodinia("rodinia_heartwall", "heartwall") # linker找不到main.h，把main.h的内容写在了kernel里
-# run_rodinia("rodinia_hotspot", "hotspot")
-# run_rodinia("rodinia_hotspot3D", "hotspot3D")
-# run_rodinia("rodinia_hybridsort", "hybridsort")
+run_rodinia("rodinia_b+tree", "b+tree")
+run_rodinia("rodinia_backprop", "backprop")
+run_rodinia("rodinia_bfs", "bfs")
+run_rodinia("rodinia_cfd", "cfd") # run操作没写在makefile里，修改了Makefile
+run_rodinia("rodinia_dwt2d", "dwt2d") # run操作没写在makefile里，修改了Makefile
+run_rodinia("rodinia_gaussian", "gaussian")
+run_rodinia("rodinia_heartwall", "heartwall") # linker找不到main.h，把main.h的内容写在了kernel里
+run_rodinia("rodinia_hotspot", "hotspot")
+run_rodinia("rodinia_hotspot3D", "hotspot3D")
+run_rodinia("rodinia_hybridsort", "hybridsort")
 # run_rodinia("rodinia_kmeans", "kmeans") # Segmentation fault (core dumped) 暂时不处理
-# run_rodinia("rodinia_lavaMD", "lavaMD")
-# run_rodinia("rodinia_leukocyte", "leukocyte")
-# run_rodinia("rodinia_lud", "lud")
-# run_rodinia("rodinia_myocyte", "myocyte") #这个的时间消耗很清楚，包括了GPU传输数据的时间
-# run_rodinia_nn() # 这个有交互，需要Enter Platform and Device No (Seperated by Space)
-# run_rodinia("rodinia_nw", "nw")
+run_rodinia("rodinia_lavaMD", "lavaMD")
+# run_rodinia("rodinia_leukocyte", "leukocyte") # Error: None of the platforms has a GPU
+run_rodinia("rodinia_lud", "lud")
+run_rodinia("rodinia_myocyte", "myocyte") #这个的时间消耗很清楚，包括了GPU传输数据的时间
+run_rodinia_nn() # 这个有交互，需要Enter Platform and Device No (Seperated by Space)
+run_rodinia("rodinia_nw", "nw")
 # run_rodinia_pathfinder()
-# run_rodinia("rodinia_srad", "srad") # linker找不到main.h，把main.h的内容写在了kernel里
-# run_rodinia("rodinia_streamcluster", "streamcluster")
+run_rodinia("rodinia_srad", "srad") # linker找不到main.h，把main.h的内容写在了kernel里
+run_rodinia("rodinia_streamcluster", "streamcluster")
 
 # ERROR: clGetContextInfo() => CL_INVALID_VALUE
 # ERROR: clGetProgramBuildInfo() => -33
 # run_rodinia_particlefilter("rodinia_particlefilter_naive", "./OCL_particlefilter_naive.out -x 128 -y 128 -z 10 -np 10000")
 
-# run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
-# run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
+run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
+run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
 
 # run_AMD("amd_AtomicCounters", "AtomicCounters", "./AtomicCounters -t -x 16777216 -i 100")
 # run_AMD("amd_BinarySearch", "BinarySearch", "./BinarySearch -t -i 100")

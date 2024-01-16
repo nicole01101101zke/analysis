@@ -6,8 +6,8 @@ import openpyxl
 data_path = "/home/zke/analysis/data.xlsx" # file to store analysis result
 parboil_directory = "/home/zke/parboil-test/"
 polybench_directory = "/home/zke/PolyBench-ACC/OpenCL/"
-rodinia_directory = "/home/zke/rodinia-main/opencl"
-rodinia_particlefilter_directory = "/home/zke/rodinia-main/opencl/particlefilter"
+rodinia_directory = "/home/zke/rodinia_GPU/opencl"
+rodinia_particlefilter_directory = "/home/zke/rodinia_GPU/opencl/particlefilter"
 amd_directory = "/home/zke/AMDAPP_samples_GPU/cl"
 
 def run_parboil(benchmark_row0, benchmark, dataset):
