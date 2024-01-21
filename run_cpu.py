@@ -70,7 +70,7 @@ def run_rodinia_nn(): # 这个看的是Exec:
     workbook.save(data_path)
 
 def run_rodinia_pathfinder(): # 很奇怪，编译时找不到timing.h，在这里跑找不到编译好的文件
-    formatted_number = "{:.10f}".format(0.198896) 
+    formatted_number = "{:.10f}".format(1.191245) 
     
     workbook = openpyxl.load_workbook(data_path)
     sheet = workbook.active
@@ -125,13 +125,13 @@ def run_AMD(benchmark_row0, path, run_command):
     workbook.save(data_path)
 
 #run_parboil("parboil_bfs", "bfs", "SF")
-run_parboil("parboil_cutcp", "cutcp", "opencl_base", "large")
-run_parboil("parboil_lbm", "lbm", "opencl_base", "long")
-run_parboil("parboil_mri-q", "mri-q", "opencl", "large")
+# run_parboil("parboil_cutcp", "cutcp", "opencl_base", "large")
+# run_parboil("parboil_lbm", "lbm", "opencl_base", "long")
+# run_parboil("parboil_mri-q", "mri-q", "opencl", "large")
 # run_parboil("parboil_sgemm", "sgemm", "opencl_base", "medium")
 #run_parboil("parboil_spmv", "spmv", "large")
-run_parboil("parboil_stencil", "stencil", "opencl_base", "default")
-run_parboil("parboil_tpacf", "tpacf", "opencl_base", "large")
+# run_parboil("parboil_stencil", "stencil", "opencl_base", "default")
+# run_parboil("parboil_tpacf", "tpacf", "opencl_base", "large")
 
 # run_polybench("polybench_correlation", "datamining/correlation", "./correlation.exe")
 # run_polybench("polybench_covariance", "datamining/covariance", "./covariance.exe")
@@ -172,7 +172,7 @@ run_parboil("parboil_tpacf", "tpacf", "opencl_base", "large")
 # run_rodinia("rodinia_myocyte", "myocyte") #这个的时间消耗很清楚，包括了GPU传输数据的时间
 # run_rodinia_nn() # 这个有交互，需要Enter Platform and Device No (Seperated by Space)
 # run_rodinia("rodinia_nw", "nw")
-# # run_rodinia_pathfinder()
+run_rodinia_pathfinder()
 # run_rodinia("rodinia_srad", "srad") # linker找不到main.h，把main.h的内容写在了kernel里
 # run_rodinia("rodinia_streamcluster", "streamcluster")
 
