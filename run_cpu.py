@@ -4,18 +4,17 @@ import re
 import openpyxl
 
 data_path = "/home/nicole/analysis/data.xlsx" # file to store analysis result
-parboil_directory = "/home/nicole/parboil-test/"
-polybench_directory = "/home/nicole/PolyBench-ACC/OpenCL/"
+parboil_directory = "/home/nicole/parboil/"
 rodinia_directory = "/home/nicole/rodinia_CPU/opencl"
 rodinia_particlefilter_directory = "/home/nicole/rodinia_CPU/opencl/particlefilter"
 amd_directory = "/home/nicole/AMDAPP_samples_CPU/cl"
 
-def run_parboil(benchmark_row0, benchmark, dataset):
+def run_parboil(benchmark_row0, benchmark, version, dataset):
     os.chdir(parboil_directory)
-    compile_command = f"./parboil run {benchmark} opencl_nvidia {dataset}"
+    compile_command = f"./parboil run {benchmark} {version} {dataset}"
     result = subprocess.run(compile_command, shell=True, stdout=subprocess.PIPE, text=True)
     output = result.stdout
-    match = re.search(r'Kernel\s+:\s+(\d+\.\d+)', output)
+    match = re.search(r'Timer Wall Time:\s+(\d+\.\d+)', output)
 
     if match:
         extracted_number = float(match.group(1))
@@ -125,14 +124,14 @@ def run_AMD(benchmark_row0, path, run_command):
             break
     workbook.save(data_path)
 
-# #run_parboil("parboil_bfs", "bfs", "SF")
-# run_parboil("parboil_cutcp", "cutcp", "large")
-# run_parboil("parboil_lbm", "lbm", "long")
-# run_parboil("parboil_mri-q", "mri-q", "large")
-# run_parboil("parboil_sgemm", "sgemm", "medium")
-# #run_parboil("parboil_spmv", "spmv", "large")
-# run_parboil("parboil_stencil", "stencil", "default")
-# run_parboil("parboil_tpacf", "tpacf", "large")
+#run_parboil("parboil_bfs", "bfs", "SF")
+run_parboil("parboil_cutcp", "cutcp", "opencl_base", "large")
+run_parboil("parboil_lbm", "lbm", "opencl_base", "long")
+run_parboil("parboil_mri-q", "mri-q", "opencl", "large")
+# run_parboil("parboil_sgemm", "sgemm", "opencl_base", "medium")
+#run_parboil("parboil_spmv", "spmv", "large")
+run_parboil("parboil_stencil", "stencil", "opencl_base", "default")
+run_parboil("parboil_tpacf", "tpacf", "opencl_base", "large")
 
 # run_polybench("polybench_correlation", "datamining/correlation", "./correlation.exe")
 # run_polybench("polybench_covariance", "datamining/covariance", "./covariance.exe")
@@ -156,33 +155,33 @@ def run_AMD(benchmark_row0, path, run_command):
 # run_polybench("polybench_jacobi-1d-imper", "stencils/jacobi-1d-imper", "./jacobi1D.exe")
 # run_polybench("polybench_jacobi-2d-imper", "stencils/jacobi-2d-imper", "./jacobi2D.exe")
 
-run_rodinia("rodinia_b+tree", "b+tree")
-run_rodinia("rodinia_backprop", "backprop")
-run_rodinia("rodinia_bfs", "bfs")
-run_rodinia("rodinia_cfd", "cfd") # run操作没写在makefile里，修改了Makefile
-run_rodinia("rodinia_dwt2d", "dwt2d") # run操作没写在makefile里，修改了Makefile
-run_rodinia("rodinia_gaussian", "gaussian")
-run_rodinia("rodinia_heartwall", "heartwall") # linker找不到main.h，把main.h的内容写在了kernel里
-run_rodinia("rodinia_hotspot", "hotspot")
-run_rodinia("rodinia_hotspot3D", "hotspot3D")
-run_rodinia("rodinia_hybridsort", "hybridsort")
-# run_rodinia("rodinia_kmeans", "kmeans") # Segmentation fault (core dumped) 暂时不处理
-run_rodinia("rodinia_lavaMD", "lavaMD")
-# run_rodinia("rodinia_leukocyte", "leukocyte") # Error: None of the platforms has a GPU
-run_rodinia("rodinia_lud", "lud")
-run_rodinia("rodinia_myocyte", "myocyte") #这个的时间消耗很清楚，包括了GPU传输数据的时间
-run_rodinia_nn() # 这个有交互，需要Enter Platform and Device No (Seperated by Space)
-run_rodinia("rodinia_nw", "nw")
-# run_rodinia_pathfinder()
-run_rodinia("rodinia_srad", "srad") # linker找不到main.h，把main.h的内容写在了kernel里
-run_rodinia("rodinia_streamcluster", "streamcluster")
+# run_rodinia("rodinia_b+tree", "b+tree")
+# run_rodinia("rodinia_backprop", "backprop")
+# run_rodinia("rodinia_bfs", "bfs")
+# run_rodinia("rodinia_cfd", "cfd") # run操作没写在makefile里，修改了Makefile
+# run_rodinia("rodinia_dwt2d", "dwt2d") # run操作没写在makefile里，修改了Makefile
+# run_rodinia("rodinia_gaussian", "gaussian")
+# run_rodinia("rodinia_heartwall", "heartwall") # linker找不到main.h，把main.h的内容写在了kernel里
+# run_rodinia("rodinia_hotspot", "hotspot")
+# run_rodinia("rodinia_hotspot3D", "hotspot3D")
+# run_rodinia("rodinia_hybridsort", "hybridsort")
+# # run_rodinia("rodinia_kmeans", "kmeans") # Segmentation fault (core dumped) 暂时不处理
+# run_rodinia("rodinia_lavaMD", "lavaMD")
+# # run_rodinia("rodinia_leukocyte", "leukocyte") # Error: None of the platforms has a GPU
+# run_rodinia("rodinia_lud", "lud")
+# run_rodinia("rodinia_myocyte", "myocyte") #这个的时间消耗很清楚，包括了GPU传输数据的时间
+# run_rodinia_nn() # 这个有交互，需要Enter Platform and Device No (Seperated by Space)
+# run_rodinia("rodinia_nw", "nw")
+# # run_rodinia_pathfinder()
+# run_rodinia("rodinia_srad", "srad") # linker找不到main.h，把main.h的内容写在了kernel里
+# run_rodinia("rodinia_streamcluster", "streamcluster")
 
 # ERROR: clGetContextInfo() => CL_INVALID_VALUE
 # ERROR: clGetProgramBuildInfo() => -33
 # run_rodinia_particlefilter("rodinia_particlefilter_naive", "./OCL_particlefilter_naive.out -x 128 -y 128 -z 10 -np 10000")
 
-run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
-run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
+# run_rodinia_particlefilter("rodinia_particlefilter_single","./OCL_particlefilter_single.out -x 128 -y 128 -z 10 -np 400000 $@")
+# run_rodinia_particlefilter("rodinia_particlefilter_double","./OCL_particlefilter_double.out -x 128 -y 128 -z 10 -np 400000 $@")
 
 # run_AMD("amd_AtomicCounters", "AtomicCounters", "./AtomicCounters -t -x 16777216 -i 100")
 # run_AMD("amd_BinarySearch", "BinarySearch", "./BinarySearch -t -i 100")
